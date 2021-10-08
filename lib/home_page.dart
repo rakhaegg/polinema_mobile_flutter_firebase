@@ -1,18 +1,31 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/provider/google_sign_id.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_application_1/authentication_service.dart';
+import 'package:provider/src/provider.dart';
 
-class LoggedInWidget extends StatelessWidget{
+class HomePage extends StatelessWidget {
+
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+  
+  String? inputDATA() {
+    final User? user = auth.currentUser;
+     String? phot = user?.photoURL;
+     return phot;
+  }
+    String? email() {
+    final User? user = auth.currentUser;
+     String? phot = user?.email;
+     return phot;
+  }
+
+
+
+
+
   @override
   Widget build(BuildContext context) {
-    //return Center(child: Text("Logged in"),);
     
-    // TODO: implement build
-    final user = FirebaseAuth.instance.currentUser;
-    String uri = user?.photoURL ?? "";
-  
-    String email = user?.email ?? null as String;
     return Container(
       alignment: Alignment.center,
       color: Colors.blueGrey.shade900,
@@ -20,34 +33,32 @@ class LoggedInWidget extends StatelessWidget{
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text( 
+          Text(
             "Logged In",
             style: TextStyle(color: Colors.white),
           ),
           SizedBox(height: 8,),
           CircleAvatar(
             maxRadius: 25,
-            backgroundImage: NetworkImage(uri),
+            backgroundImage: NetworkImage(inputDATA() ?? ""),
           ),
-          SizedBox(height: 8 ),
+          SizedBox(height: 8,),
           Text(
-            "Email" + email,
+            "Email" + (email() ?? ""),
             style: TextStyle(color: Colors.white),
           ),
           SizedBox(height: 8,),
           ElevatedButton(
             onPressed: (){
-              final provider = 
-              Provider.of<GoogleSignInProvider>(context , listen : false );
-              provider.logout();
-            } , 
+              context.read<AuthenticationServince>().signOut();
+            }, 
             child: Text(
               "Logout"
-            ))
+            )
+            )
         ],
       ),
     );
     
   }
-  
 }
